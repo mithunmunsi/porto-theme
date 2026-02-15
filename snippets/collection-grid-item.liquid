@@ -1,0 +1,28 @@
+{% capture collection_title %}{{ sub_collection.title | escape }}{% endcapture %}
+{%- assign product_count = sub_collection.all_products_count -%}
+{%- if sub_collection.template_suffix == 'sub-collection' -%}
+{%- assign product_count = total_products -%}
+{%- endif -%}   
+<a href="{{ sub_collection.url }}" title="{{ sub_collection.title }}"> 
+  <span class="thumb-info align-center">   
+      <span class="thumb-info-wrapper tf-none"> 
+        {% if sub_collection.image %}
+          {{ sub_collection.image.src | collection_img_url: '400x400', crop: 'center' | img_tag: collection_title }}
+        {% else %}
+          {{ sub_collection.products.first.featured_image | product_img_url: '400x400', crop: 'center' | img_tag: collection_title }}
+        {% endif %}
+      </span>   
+    <span class="thumb-info-wrap"> 
+      <span class="thumb-info-title">
+        <h3 class="sub-title thumb-info-inner">  
+          {{ sub_collection.title }}
+        </h3> 
+        {%- if product_count > 0 -%}
+        <span class="thumb-info-type"> 
+          <mark class="count"><span>{{ 'collections.general.items_with_count' | t: count: product_count }}</span></mark>
+        </span> 
+        {%- endif -%}
+      </span> 
+    </span> 
+  </span> 
+</a>  

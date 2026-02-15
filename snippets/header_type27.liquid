@@ -1,0 +1,38 @@
+{%- if settings.header_topbar_disable == blank -%}
+<div class="top-links-container topbar-text-{{settings.topbar_text_color}}">
+  <div class="container">
+    <div class="top-links-inner">
+      {% if settings.topbar_custom_text2 != '' %}
+      <div class="custom-block"> 
+        {% include 'shortcode' load: settings.topbar_custom_text2 %}  
+      </div>
+      {% endif %} 
+      <div class="top-links-area show-icon-tablet">
+        <div class="top-links-icon">
+          <a href="javascript:;">{{ 'header.settings.links' | t }}</a>
+        </div>
+        {% section 'header-toplink-menu' %}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+<div class="header container">
+  <div class="header-left">
+    <div class="menu-icon"><a href="javascript:void(0)" title="Menu"><i class="fa fa-bars"></i></a></div> 
+    {% include 'header-logo' %}
+  </div>   
+  <div class="header-right"> 
+    <div class="search-area show-icon-tablet">
+      <a href="javascript:void(0);" class="search-icon"><span><i class="icon-magnifier"></i></span></a>
+      {% include 'header-search' %}
+    </div>
+    {% if settings.header_custom_text != '' %} 
+      {% include 'shortcode' load: settings.header_custom_text %}   
+    {% endif %}
+    <span class="separator m-r-md m-l-sm d-none d-xxl-block" style="border-left: 1px solid #e7e7e7;height:40px;"></span>
+    <div class="mini-cart text-pos-left">
+      {% include 'header-cart' %}
+    </div> 
+  </div> 
+</div> 

@@ -1,0 +1,880 @@
+{%- if section.blocks.size > 0 -%}
+<div class="navigation-wrapper">
+  <div class="main-navigation">
+    <ul class="top-navigation side-menu"> 
+      {%- for block in section.blocks -%} 
+      {%- case block.type -%} 
+      {%- when 'mega_dropdown' -%} 
+        {%- assign pro_left = block.settings.menu_proportions_left -%}
+        {%- assign pro_right = block.settings.menu_proportions_right -%}
+        {%- assign groups = pro_left | plus:pro_right -%}
+        {%- assign grid = 12 | minus: groups -%}
+        <li class="level0 {{ block.settings.menu_item_extra_class }} level-top{% if block.settings.menu.links != blank %} parent{% endif %}{% if link.active %} active{% endif %}{% if block.settings.full_width == blank %} static-dropdown{% endif %}{% if block.settings.menu_item_float == 'right' %} float-right{% endif %}">
+          <a href="{{ block.settings.button_link }}" class="level-top">
+            {%- if block.settings.menu_icon_image_use != blank -%}
+              <img class="category-icon" data-src="{{ block.settings.menu_icon_image | img_url: '85x85' }}" alt="icon">
+            {%- else -%}
+              {%- if block.settings.menu_item_font_icon != '' -%}
+              <i class="category-icon {{block.settings.menu_item_font_icon}}"></i>
+              {%- endif -%}
+            {%- endif -%}
+            <span class="level0"> 
+              {{ block.settings.title }} 
+              {%- if block.settings.menu_item_label_text1 !='' and block.settings.menu_item_label == '1' -%}
+              <span class="cat-label cat-label-label1 pin-bottom"> 
+                {{ block.settings.menu_item_label_text1 }} 
+              </span>
+              {%- endif -%}
+              {%- if block.settings.menu_item_label_text2 !='' and block.settings.menu_item_label == '2' -%}
+              <span class="cat-label cat-label-label2 pin-bottom"> 
+                {{ block.settings.menu_item_label_text2 }} 
+              </span>
+              {%- endif -%}
+            </span> 
+          </a> 
+          {%- if block.settings.menu.links != blank -%}
+          <div class="level0 menu-wrap-sub"{% if block.settings.full_width == blank %} style="width: {{block.settings.menu_width | remove:'px' | append:'px'}};"{% endif %}>
+            <div class="container">
+              {%- if block.settings.menu_banner_top_enable or block.settings.menu_item_block_top != blank -%}
+              <div class="ulmenu-block ulmenu-block-top grid-full std">
+                {%- if block.settings.menu_banner_top_enable -%}
+                {{ block.settings.menu_banner_top | img_url:"900x" | img_tag: 'banner-top' }}
+                {%- endif -%}  
+                {% include 'shortcode' load: block.settings.menu_item_block_top %} 
+              </div>
+              {%- endif -%}
+              <div class="mega-columns row">
+                {%- if block.settings.menu_proportions_left != '0' -%}
+                <div class="menu-static-blocks ulmenu-block ulmenu-block-left float-left col-md-{{ block.settings.menu_proportions_left }}">
+                  {%- if block.settings.menu_banner_left_enable -%}
+                  <img src="{{block.settings.menu_banner_left | img_url }}" alt="banner left" style="max-width: 100%;"/>
+                  {%- endif -%}  
+                {% include 'shortcode' load: block.settings.menu_item_block_left %} 
+                </div>
+                {%- endif -%}
+                <div class="ulmenu-block ulmenu-block-center menu-items col-md-{{ grid }} itemgrid itemgrid-{{ block.settings.menu_item_column }}col">
+                  <div class="row">
+                    <ul class="level0"> 
+                      {%- for childlink in block.settings.menu.links -%} 
+                      {%- capture banner_sub_top_enable -%}menu_banner_sub_top_enable_{{ forloop.index }}{%- endcapture -%}
+                      {%- capture banner_sub_top -%}menu_banner_sub_top_column_{{ forloop.index }}{%- endcapture -%}
+                      {%- assign grand_child_list_handle = childlink.title | handle -%}
+                      {%- if childlink.links != blank -%}
+                      <li class="level1{% if childlink.active %} active{% endif %} item groups">
+                        {%- if block.settings[banner_sub_top_enable] != blank -%}
+                        <div class="banner-sub-top">{{ block.settings[banner_sub_top] | img_url:"400x" | img_tag: 'banner-sub-top' }}</div>
+                        {%- endif -%}
+                        <a href="{{ childlink.url }}" class="title-level1"> 
+                          {{ childlink.title }} 
+                        </a>
+                        <div class="menu-wrapper">
+                          <ul class="level1">
+                            {%- for grand_child_link in childlink.links -%}
+                            <li class="level2 {% if grand_child_link.active %}active{% endif %}">
+                              <a href="{{ grand_child_link.url }}" class="site-nav__link"> 
+                                {{ grand_child_link.title | split: '[' | first | capitalize }} 
+                                {%- if grand_child_link.title contains '[' -%}
+                                {%- assign label_child = grand_child_link.title | split: '[' | last | split: ']' | first -%}
+                                <span class="cat-label cat-label-{{label_child | handleize }} pin-left">{{label_child | upcase }}</span>
+                                {%- endif -%}
+                              </a>
+                            </li>
+                            {%- endfor -%}
+                          </ul>
+                        </div>
+                      </li>
+                      {%- else -%}
+                      <li class="level1 item {% if childlink.active %}active{% endif %}">
+                        {%- if block.settings[banner_sub_top_enable] != blank -%}
+                        <div class="banner-sub-top">
+                          {{ block.settings[banner_sub_top] | img_url:"400x" | img_tag: 'banner-sub-top' }}
+                        </div>
+                        {%- endif -%}
+                        <a href="{{ childlink.url }}"> 
+                          {{ childlink.title }} 
+                        </a>
+                      </li>
+                      {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+                {%- if block.settings.menu_proportions_right != '0' -%}
+                <div class="menu-static-blocks ulmenu-block ulmenu-block-right col-md-{{ block.settings.menu_proportions_right }}">
+                  {%- if block.settings.menu_banner_right_enable -%}
+                  <img src="{{ block.settings.menu_banner_right | img_url:"600x" }}" alt="banner right"/>
+                  {%- endif -%}  
+                {% include 'shortcode' load: block.settings.menu_item_block_right %} 
+                </div>
+                {%- endif -%}
+              </div>
+              {%- if block.settings.menu_banner_bottom_enable or block.settings.menu_item_block_bottom != blank -%}
+              <div class="ulmenu-block ulmenu-block-bottom grid-full std">
+                {%- if block.settings.menu_banner_bottom_enable -%}
+                {{ block.settings.menu_banner_bottom | img_url:"900x" | img_tag: 'banner-bottom' }}
+                {%- endif -%}  
+                {% include 'shortcode' load: block.settings.menu_item_block_bottom %} 
+              </div>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- endif -%} 
+        </li>
+      {%- when 'classic_dropdown' -%}
+        <li class="level0{{ block.settings.menu_item_extra_class }} level-top{% if block.settings.menu.links != blank %} parent{% endif %} m-dropdown{% if link.active %} active{% endif %}{% if block.settings.menu_item_float == 'right' %} float-right{% endif %}">
+          <a href="{{ block.settings.button_link }}" class="level-top">
+            {%- if block.settings.menu_icon_image_use != blank -%}
+              <img class="category-icon" data-src="{{ block.settings.menu_icon_image | img_url: '85x85' }}" alt="icon">
+            {%- else -%}
+              {%- if block.settings.menu_item_font_icon != '' -%}
+              <i class="category-icon {{block.settings.menu_item_font_icon}}"></i>
+              {%- endif -%}
+            {%- endif -%}
+            <span class="level0"> 
+              {{ block.settings.title }} 
+              {%- if block.settings.menu_item_label_text1 !='' and block.settings.menu_item_label == '1' -%}
+              <span class="cat-label cat-label-label1 pin-bottom"> 
+                {{ block.settings.menu_item_label_text1 }} 
+              </span>
+              {%- endif -%}
+              {%- if block.settings.menu_item_label_text2 !='' and block.settings.menu_item_label == '2' -%}
+              <span class="cat-label cat-label-label2 pin-bottom"> 
+                {{ block.settings.menu_item_label_text2 }} 
+              </span>
+              {%- endif -%}
+            </span> 
+          </a>  
+          {%- if block.settings.menu.links != blank -%} 
+          <div class="level0 menu-wrap-sub dropdown">
+            <div class="container">
+              <div class="mega-columns row">
+                <div class="ulmenu-block ulmenu-block-center menu-items itemgrid">
+                  <div class="row">
+                    <ul class="level0"> 
+                      {%- for childlink in block.settings.menu.links -%}  
+                      {%- if childlink.links != blank -%}
+                      <li class="level1{% if childlink.active %} active{% endif %} item parent">
+                        <a href="{{ childlink.url }}" class="title-level1"> 
+                          {{ childlink.title }} 
+                        </a>
+                        <div class="menu-wrap-sub">
+                          <ul class="level1">
+                            {%- for grand_child_link in childlink.links -%}  
+                                <li class="level2 {% if grand_child_link.active %}active{% endif %}">
+                                  <a href="{{ grand_child_link.url }}" class="site-nav__link"> 
+                                    {{ grand_child_link.title | split: '[' | first | capitalize }} 
+                                    {%- if grand_child_link.title contains '[' -%}
+                                    {%- assign label_child = grand_child_link.title | split: '[' | last | split: ']' | first -%}
+                                    <span class="cat-label cat-label-{{label_child | handleize }} pin-left">{{label_child | upcase }}</span>
+                                    {%- endif -%}
+                                  </a>
+                                </li>  
+                            {%- endfor -%}
+                          </ul>
+                        </div>
+                      </li>
+                      {%- else -%}
+                      <li class="level1 item {% if childlink.active %}active{% endif %}">
+                        <a href="{{ childlink.url }}"> 
+                          {{ childlink.title }} 
+                        </a>
+                      </li>
+                      {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {%- endif -%} 
+        </li> 
+      {%- when 'custom_html_block' -%}  
+        <li class="level0{{ block.settings.menu_item_extra_class }} level-top parent{% if link.active %} active{% endif %}{% if block.settings.full_width == blank %} static-dropdown{% endif %}{% if block.settings.menu_item_float == 'right' %} float-right{% endif %}">
+          <a href="{{ block.settings.button_link }}" class="level-top">
+            {%- if block.settings.menu_icon_image_use != blank -%}
+              <img class="category-icon" data-src="{{ block.settings.menu_icon_image | img_url: '85x85' }}" alt="icon">
+            {%- else -%}
+              {%- if block.settings.menu_item_font_icon != '' -%}
+              <i class="category-icon {{block.settings.menu_item_font_icon}}"></i>
+              {%- endif -%}
+            {%- endif -%}
+            <span class="level0"> 
+              {{ block.settings.title }} 
+              {%- if block.settings.menu_item_label_text1 !='' and block.settings.menu_item_label == '1' -%}
+              <span class="cat-label cat-label-label1 pin-bottom"> 
+                {{ block.settings.menu_item_label_text1 }} 
+              </span>
+              {%- endif -%}
+              {%- if block.settings.menu_item_label_text2 !='' and block.settings.menu_item_label == '2' -%}
+              <span class="cat-label cat-label-label2 pin-bottom"> 
+                {{ block.settings.menu_item_label_text2 }} 
+              </span>
+              {%- endif -%}
+            </span> 
+          </a> 
+          <div class="level0 menu-wrap-sub"{% if block.settings.full_width == blank %} style="width: {{block.settings.menu_width | remove:'px' | append:'px'}};"{% endif %}> 
+            {% include 'shortcode' load: block.settings.html %}   
+          </div> 
+        </li>
+      {%- else -%}
+       <li class="level0{{ block.settings.menu_item_extra_class }} level-top{% if link.active %} active{% endif %}{% if block.settings.menu_item_float == 'right' %} float-right{% endif %}">
+        <a href="{{ block.settings.button_link }}" class="level-top">
+          {%- if block.settings.menu_icon_image_use != blank -%}
+            <img class="category-icon" data-src="{{ block.settings.menu_icon_image | img_url: '85x85' }}" alt="icon">
+          {%- else -%}
+            {%- if block.settings.menu_item_font_icon != '' -%}
+            <i class="category-icon {{block.settings.menu_item_font_icon}}"></i>
+            {%- endif -%}
+          {%- endif -%}
+          <span class="level0"> 
+            {{ block.settings.title }} 
+            {%- if block.settings.menu_item_label_text1 !='' and block.settings.menu_item_label == '1' -%}
+            <span class="cat-label cat-label-label1 pin-bottom"> 
+              {{ block.settings.menu_item_label_text1 }} 
+            </span>
+            {%- endif -%}
+            {%- if block.settings.menu_item_label_text2 !='' and block.settings.menu_item_label == '2' -%}
+            <span class="cat-label cat-label-label2 pin-bottom"> 
+              {{ block.settings.menu_item_label_text2 }} 
+            </span>
+            {%- endif -%}
+          </span> 
+        </a> 
+      </li>
+      {%- endcase -%}
+      {%- endfor -%}
+    </ul> 
+  </div>
+</div>
+{%- endif -%}
+{%- schema -%}
+{
+  "name": "t:settings_schema.mainmenu.name",  
+  "blocks": [
+    {
+      "type":"mega_dropdown",
+      "name":"Mega Dropdown",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings_schema.mainmenu.settings.title.label",
+          "default": "Home",
+          "info": "Ex: Home"
+        }, 
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:settings_schema.mainmenu.settings.button_link.label"
+        }, 
+        {
+          "type": "text",
+          "id": "menu_item_extra_class",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_extra_class.label"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_float",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_float.label",
+          "options": [
+            {
+              "value": "default",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__1.label"
+            },
+            {
+              "value": "right",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__2.label"
+            }
+          ],
+          "default": "default",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_float.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_icon_image_use",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image_use.label",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_icon_image",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_icon_image.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_font_icon",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_font_icon.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_font_icon.info"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_label",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label.info",
+          "options": [
+            {
+              "value": "",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__1.label"
+            },
+            {
+              "value": "2",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__2.label"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text1",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text1.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text1.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text2",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text2.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text2.info"
+        }, 
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:settings_schema.mainmenu.settings.menu.label"
+        },
+        {
+          "type": "text",
+          "id": "menu_width",
+          "label": "t:settings_schema.mainmenu.settings.menu_width.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_width.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "full_width",
+          "label": "t:settings_schema.mainmenu.settings.full_width.label"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_column",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_column.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_column.info",
+          "options": [
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            }
+          ],
+          "default": "3"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_left_enable",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_left_enable.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_left", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_left.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_left.info"
+        },
+        {
+          "type": "textarea",
+          "id": "menu_item_block_left",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_block_left.label"
+        },
+        {
+          "type": "select",
+          "id": "menu_proportions_left",
+          "label": "t:settings_schema.mainmenu.settings.menu_proportions_left.label",
+          "options": [
+            {
+              "value": "0",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            }
+          ],
+          "default": "0",
+          "info": "t:settings_schema.mainmenu.settings.menu_proportions_left.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_right_enable",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_right_enable.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_right", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_right.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_right.info"
+        },
+        {
+          "type": "textarea",
+          "id": "menu_item_block_right",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_block_right.label"
+        },
+        {
+          "type": "select",
+          "id": "menu_proportions_right",
+          "label": "t:settings_schema.mainmenu.settings.menu_proportions_right.label",
+          "options": [
+            {
+              "value": "0",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            }
+          ],
+          "default": "0",
+          "info": "t:settings_schema.mainmenu.settings.menu_proportions_right.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_top_enable",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_top_enable.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_top", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_top.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_top.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_1",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_1.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_1", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_1.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_1.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_2",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_2.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_2", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_2.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_2.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_3",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_3.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_3", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_3.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_3.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_4",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_4.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_4", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_4.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_4.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_5",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_5.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_5", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_5.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_5.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_sub_top_enable_6",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_enable_6.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_sub_top_column_6", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_6.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_sub_top_column_6.info"
+        },
+        {
+          "type": "textarea",
+          "id": "menu_item_block_top",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_block_top.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_banner_bottom_enable",
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_bottom_enable.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_banner_bottom", 
+          "label": "t:settings_schema.mainmenu.settings.menu_banner_bottom.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_banner_bottom.info"
+        },
+        {
+          "type": "textarea",
+          "id": "menu_item_block_bottom",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_block_bottom.label"
+        }
+      ]
+    }, 
+    {
+      "type":"classic_dropdown",
+      "name":"Classic Menu Dropdown",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings_schema.mainmenu.settings.title.label",
+          "default": "Home",
+          "info": "Ex: Home"
+        }, 
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:settings_schema.mainmenu.settings.button_link.label"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_float",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_float.label",
+          "options": [
+            {
+              "value": "default",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__1.label"
+            },
+            {
+              "value": "right",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__2.label"
+            }
+          ],
+          "default": "default",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_float.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_icon_image_use",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image_use.label",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_icon_image",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_icon_image.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_font_icon",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_font_icon.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_font_icon.info"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_label",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label.info",
+          "options": [
+            {
+              "value": "",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__1.label"
+            },
+            {
+              "value": "2",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__2.label"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text1",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text1.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text1.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text2",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text2.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text2.info"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:settings_schema.mainmenu.settings.menu.label"
+        } 
+      ]
+    },
+    {
+      "type":"custom_html_block",
+      "name":"HTML block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings_schema.mainmenu.settings.title.label",
+          "default": "Home",
+          "info": "Ex: Home"
+        }, 
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:settings_schema.mainmenu.settings.button_link.label"
+        },
+        
+        {
+          "type": "select",
+          "id": "menu_item_float",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_float.label",
+          "options": [
+            {
+              "value": "default",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__1.label"
+            },
+            {
+              "value": "right",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__2.label"
+            }
+          ],
+          "default": "default",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_float.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_icon_image_use",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image_use.label",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_icon_image",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_icon_image.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_font_icon",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_font_icon.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_font_icon.info"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_label",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label.info",
+          "options": [
+            {
+              "value": "",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__1.label"
+            },
+            {
+              "value": "2",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__2.label"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text1",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text1.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text1.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text2",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text2.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text2.info"
+        },
+        {
+          "type": "html",
+          "id": "html",
+          "label": "t:settings_schema.mainmenu.settings.html.label",
+          "info": "t:settings_schema.mainmenu.settings.html.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "full_width",
+          "label": "t:settings_schema.mainmenu.settings.full_width.label"
+        },
+        {
+          "type": "text",
+          "label": "t:settings_schema.mainmenu.settings.menu_width.label",
+          "id": "menu_width",
+          "default": "800",
+          "info": "t:settings_schema.mainmenu.settings.menu_width.info"
+        }
+      ]
+    },
+    {
+      "type":"menu_item_no_children",
+      "name":"Menu item no children",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:settings_schema.mainmenu.settings.title.label",
+          "default": "Home",
+          "info": "Ex: Home"
+        }, 
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:settings_schema.mainmenu.settings.button_link.label"
+        },
+        
+        {
+          "type": "select",
+          "id": "menu_item_float",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_float.label",
+          "options": [
+            {
+              "value": "default",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__1.label"
+            },
+            {
+              "value": "right",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_float.options__2.label"
+            }
+          ],
+          "default": "default",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_float.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "menu_icon_image_use",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image_use.label",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "menu_icon_image",
+          "label": "t:settings_schema.mainmenu.settings.menu_icon_image.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_icon_image.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_font_icon",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_font_icon.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_font_icon.info"
+        },
+        {
+          "type": "select",
+          "id": "menu_item_label",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label.info",
+          "options": [
+            {
+              "value": "",
+              "label": ""
+            },
+            {
+              "value": "1",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__1.label"
+            },
+            {
+              "value": "2",
+              "label": "t:settings_schema.mainmenu.settings.menu_item_label.options__2.label"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text1",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text1.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text1.info"
+        },
+        {
+          "type": "text",
+          "id": "menu_item_label_text2",
+          "label": "t:settings_schema.mainmenu.settings.menu_item_label_text2.label",
+          "info": "t:settings_schema.mainmenu.settings.menu_item_label_text2.info"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
